@@ -25,12 +25,14 @@ namespace EjercicioClase1Modulo3.Controllers
         [GET] v1/libros
         */
 
-        [HttpGet]
-        [Route( "" )]
-        public ActionResult<List<Book>> GetBooks()
-        {
-            return Ok();
-        }
+        // [HttpGet]
+        // [Route( "v1/libros" )]
+        // public ActionResult<List<Book>> GetBooks()
+        // {
+        //     
+        //     return Books;
+        //   
+        // }
 
         #endregion
 
@@ -40,6 +42,18 @@ namespace EjercicioClase1Modulo3.Controllers
         [GET] v1/libros/{id}
         Ejemplo: v1/libros/8 (devuelve toda la información del libro cuyo id es 8. Es decir: El diario de Ana Frank)
         */
+        
+        [HttpGet]
+        [Route( "v1/libros/{id}" )]
+        public ActionResult<Book> GetBookById( int id )
+        {
+            var book = Books.FirstOrDefault( x => x.id == id );
+            if (book == null)
+            {
+                return NotFound();
+            }
+            return book;
+        }
 
 
         #endregion
@@ -50,6 +64,18 @@ namespace EjercicioClase1Modulo3.Controllers
         [GET] v1/libros/genero/{genero} 
         Ejemplo: v1/libros/genero/fantasía (devuelve una lista de todos los libros del género fantasía)
          */
+        
+        [HttpGet]
+        [Route( "v1/libros/genero/{genero}" )]
+        public ActionResult<List<Book>> GetBooksByGenre( string genero )
+        {
+            var books = Books.Where( x => x.genero.ToLower() == genero.ToLower() ).ToList();
+            if (books.Count == 0)
+            {
+                return NotFound();
+            }
+            return books;
+        }
 
 
         #endregion
@@ -60,6 +86,18 @@ namespace EjercicioClase1Modulo3.Controllers
         [GET] v1/libros?autor={autor}
         Ejemplo: v1/libros?autor=Paulo Coelho (devuelve una lista de todos los libros del autor Paulo Coelho)
          */
+        
+        // [HttpGet]
+        // [Route( "v1/libros" )]
+        // public ActionResult<List<Book>> GetBooksByAuthor( string autor )
+        // {
+        //     var books = Books.Where( x => x.autor.ToLower() == autor.ToLower() ).ToList();
+        //     if (books.Count == 0)
+        //     {
+        //         return NotFound();
+        //     }
+        //     return books;
+        // }
 
         #endregion
 
@@ -69,6 +107,14 @@ namespace EjercicioClase1Modulo3.Controllers
         [GET] v1/libros/generos
         Idealmente, el listado de géneros que retorne el endpoint, no debe contener repetidos.
          */
+        
+        [HttpGet]
+        [Route( "v1/libros/generos" )]
+        public ActionResult<List<string>> GetGenres()
+        {
+            var genres = Books.Select( x => x.genero ).Distinct().ToList();
+            return genres;
+        }
 
         #endregion
 
@@ -81,6 +127,19 @@ namespace EjercicioClase1Modulo3.Controllers
         v1/libros?pagina=2&cantidad=10 (devuelve una lista de diez libros, salteando los primeros 10)
         v1/libros?pagina=3&cantidad=10 (devuelve una lista de diez libros, salteando los primeros 20)
          */
+        
+        [HttpGet]
+        [Route( "v1/libros" )]
+        public ActionResult<List<Book>> GetBooksByPage( int pagina, int cantidad )
+        {
+            var books = Books.Skip( ( pagina - 1 ) * cantidad ).Take( cantidad ).ToList();
+            if (books.Count == 0)
+            {
+                return NotFound();
+            }
+            return books;
+        }
+        
         #endregion
     }
 }
